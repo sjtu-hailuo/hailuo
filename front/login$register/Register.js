@@ -34,7 +34,6 @@ static navigationOptions = {
   render() {
     return (
     <ImageBackground source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'}} style={{width: '100%', height: '100%'}}>
-
       <View style={{alignItems: 'center', marginTop: 200}}>
       <Text style={styles.bigblue}>User Name:</Text>
       <TextInput

@@ -23,8 +23,16 @@ export default class Login extends Component {
   }
   onPressCheck = ()=>{
   if (this.state.name.length>0 && this.state.pwd.length>0){
+      /*fetch('http://localhost:8082/book/table')
+            .then((response) => alert(response.status))
+            .then((responseJson) => {
+              //alert(responseJson.movies)
+            })
+            .catch((error) => {
+              console.error(error);
+            });*/
       alert('Success! Go to the Menu.')
-      this.props.navigation.navigate('Main')
+      this.props.navigation.navigate('Main',{name:this.state.name})
       }
       else alert('Name or Password cannot be null!')
     }

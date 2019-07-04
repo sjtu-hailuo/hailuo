@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import {
         View,
         Text,
-        Button
+        Button,
+        ImageBackground
 }from 'react-native'
 
 export default class Home extends Component {
@@ -26,7 +27,7 @@ export default class Home extends Component {
                    <Text style={{height: 100}}> </Text>
                     <Button
                        title="Visitor,experience first."
-                       onPress={()=>navigate.navigate('Main')}
+                       onPress={()=>navigate.navigate('Main',{name:'Visitor'})}
                     />
                </View>
            </ImageBackground>
