@@ -23,8 +23,29 @@ static navigationOptions = {
   onPressCheck = ()=>{
   if (this.state.name.length>0 && this.state.pwd.length>0){
       if (this.state.pwd==this.state.cpwd){
-          alert('Success! Go to Login.')
-          this.props.navigation.navigate('Login')
+          fetch('http://10.0.2.2:8080/user/register',{
+                                                     method: 'POST',
+                                                     headers: {
+                                                       'Accept': 'application/json',
+                                                       'Content-Type': 'application/json',
+                                                     },
+                                                     body: JSON.stringify({
+                                                       username: this.state.name,
+                                                       password: this.state.pwd,
+                                                     })
+                                                   }
+                                                   )
+                      .then((response) => response.json())
+                      .then((responseJson) => {
+                        if (responseJson.username=='exist')  alert('This name has been registered.Please choose another one.')
+                        else {
+                                 alert('Success! Go to the Login.')
+                                 this.props.navigation.navigate('Login')
+                        }
+                      })
+                      .catch((error) => {
+                        console.error(error);
+                      });
       }
       else alert('Failed to confirm your password.')
       }
@@ -33,23 +54,23 @@ static navigationOptions = {
 
   render() {
     return (
-    <ImageBackground source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'}} style={{width: '100%', height: '100%'}}>
+    <ImageBackground source={require('./img/timg.jpg')} style={{width: '100%', height: '100%'}}>
       <View style={{alignItems: 'center', marginTop: 200}}>
       <Text style={styles.bigblue}>User Name:</Text>
       <TextInput
-          style={{height: 40}}
+          style={{height: 100}}
           placeholder="Input your name here."
           onChangeText={(name) => this.setState({name})}/>
 
       <Text style={styles.bigblue}>Password:</Text>
       <TextInput
-          style={{height: 40}}
+          style={{height: 100}}
           placeholder="Input your password here."
           onChangeText={(pwd) => this.setState({pwd})}/>
 
       <Text style={styles.bigblue}>Confirm Password:</Text>
       <TextInput
-          style={{height: 40}}
+          style={{height: 100}}
           placeholder="Confirm your password here."
           onChangeText={(cpwd) => this.setState({cpwd})}/>
 

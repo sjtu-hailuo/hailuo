@@ -13,7 +13,7 @@ export default class Home extends Component {
        render(){
            const navigate = this.props.navigation;
            return (
-           <ImageBackground source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'}} style={{width: '100%', height: '100%'}}>
+           <ImageBackground source={require('./img/timg.jpg')} style={{width: '100%', height: '100%'}}>
                <View style={{alignItems: 'center',justifyContent: 'center'},{marginTop:300}}>
                    <Button
                        title="Go to Login"

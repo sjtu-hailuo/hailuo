@@ -23,35 +23,52 @@ export default class Login extends Component {
   }
   onPressCheck = ()=>{
   if (this.state.name.length>0 && this.state.pwd.length>0){
-      /*fetch('http://localhost:8082/book/table')
-            .then((response) => alert(response.status))
+      fetch('http://10.0.2.2:8080/login',{
+                                           method: 'POST',
+                                           headers: {
+                                             'Accept': 'application/json',
+                                             'Content-Type': 'application/json',
+                                           },
+                                           body: JSON.stringify({
+                                             username: this.state.name,
+                                             password: this.state.pwd,
+                                           })
+                                         }
+                                         )
+            .then((response) => response.json())
             .then((responseJson) => {
-              //alert(responseJson.movies)
+              if (responseJson.right==-1)  alert('No such user.')
+              else if (responseJson.right==0)  alert('You have been banned!')
+              else {
+                   if (responseJson.password==this.state.pwd){
+                       alert('Success! Go to the Menu.')
+                       this.props.navigation.navigate('Main',{name:this.state.name})
+                   }
+                   else alert('Wrong password!');
+              }
             })
             .catch((error) => {
               console.error(error);
-            });*/
-      alert('Success! Go to the Menu.')
-      this.props.navigation.navigate('Main',{name:this.state.name})
+            });
       }
       else alert('Name or Password cannot be null!')
     }
 
   render() {
     return (
-    <ImageBackground source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'}} style={{width: '100%', height: '100%'}}>
+    <ImageBackground source={require('./img/timg.jpg')} style={{width: '100%', height: '100%'}}>
 
       <View style={{alignItems: 'center', marginTop: 200}}>
       <Text style={styles.bigblue}>User Name:</Text>
         <TextInput
-          style={{height: 40}}
+          style={{height: 100}}
           placeholder="Input your name here."
           onChangeText={(name) => this.setState({name})}
         />
 
         <Text style={styles.bigblue}>Password:</Text>
                 <TextInput
-                  style={{height: 40}}
+                  style={{height: 100}}
                   placeholder="Input your password here."
                   onChangeText={(pwd) => this.setState({pwd})}
                 />
