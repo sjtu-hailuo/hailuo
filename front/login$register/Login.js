@@ -50,9 +50,9 @@ export default class Login extends Component {
             .catch((error) => {
               console.error(error);
             });
-      }
-      else alert('Name or Password cannot be null!')
-    }
+  }
+  else alert('Name or Password cannot be null!')
+  }
 
   render() {
     return (
