@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./opensheetmusicdisplay.min.js"></script>
+</head>
+<body>
+<div id="div-container">
+</div>
+<script>
+  var osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("div-container");
+  osmd.load("http://localhost:8081/src/react-opensheetmusicdisplay-master/public/Beethoven_AnDieFerneGeliebte.xml")
+    .then(function(){
+      osmd.graphic.measureList[0][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+    });
+  osmd.render();
+
+
+  // var message;
+  // window.onload = function() {
+  //   document.addEventListener('message', function(msg) {
+  //     console.log(msg)
+  //     message = msg.data;
+  //   });
+  // }
+</script>
+</body>
+</html>
