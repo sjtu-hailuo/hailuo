@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+         http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    <bean id="userService" class="org.manstein.hailuo.serviceimpl.UserServiceImpl">
+
+    </bean>
+    <!--<bean id="userDao" class="UserDaoImpl">    </bean>-->
+    <bean id="userService1" class="org.manstein.hailuo.serviceimpl.UserServiceImpl">
+
+    </bean>
+    <!--<bean id="userDao1" class="UserDaoImpl">    </bean>-->
+    <!--<bean id="cartDao" class="CartDaoImpl">    </bean>-->
+    <!--<bean id="orderItemDao" class="OrderItemDaoImpl">    </bean>-->
+
+    <!--<mongo:mongo host="${resource.db.host}" port="${resource.db.port}" />
+    <mongo:db-factory id="mongoDbFactory" dbname="gate" mongo-ref="mongo" />
+    <bean class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
+        <constructor-arg ref="mongoDbFactory" />
+        <constructor-arg ref="converter" />	</bean>
+    <mongo:mapping-converter id="converter"/>-->
+
+</beans>
