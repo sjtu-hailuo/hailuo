@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./opensheetmusicdisplay.min.js">
+    </script>
+</head>
+<body>
+<h1 id="test">Hello</h1>
+<div id="div-container">
+</div>
+<script>
+  var osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("div-container");
+  function testt(message){
+    document.getElementById('test').innerHTML = 'test function:'+message;
+  }
+
+  function loadscore(route){
+    document.getElementById('test').innerHTML = 'loadingscore:'+route;
+    osmd.load(route)
+      .then(function(){
+        document.getElementById('test').innerHTML = 'now loading';
+        // osmd.graphic.measureList[0][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[0][1].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[1][1].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[8][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[8][0].staffEntries[7].graphicalVoiceEntries[0].notes[1].sourceNote.noteheadColor = "#0000FF";
+      })
+      .then(function(){
+        osmd.render();
+        document.getElementById('test').innerHTML = 'loaded';
+      });
+  }
+
+  function changeNoteColor(note){
+    document.getElementById('test').innerHTML = 'changing note color:'+note.bar+note.line+note.hpos+note.vpos+note.color;
+    osmd.graphic.measureList[note.bar][note.line].staffEntries[note.hpos].graphicalVoiceEntries[0].notes[note.vpos].sourceNote.noteheadColor = note.color;
+    osmd.render();
+    document.getElementById('test').innerHTML = 'rendered';
+  }
+
+  document.addEventListener("message", function(jsonData) {
+    var data=JSON.parse(jsonData.data);
+    document.getElementById('test').innerHTML = 'listened message:'+jsonData;
+    if(data.type==='color'){
+      document.getElementById('test').innerHTML = 'changing note color:'+data.content;
+      changeNoteColor(data.content);
+    }
+    else if(data.type==='route'){
+      document.getElementById('test').innerHTML = 'loading score:'+data.content;
+      loadscore(data.content);
+    }
+  });
+
+  document.getElementById('test').innerHTML = 'html loaded';
+  //http://localhost:8081/src/musicxml/MuzioClementi_SonatinaOpus36No1_Part2.xml
+  //http://localhost:8081/musicxml/ActorPreludeSample.musicxml
+
+
+</script>
+</body>
+</html>

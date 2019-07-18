@@ -1,0 +1,41 @@
+1.<finder>:
+    Emitter:
+        when sheet selected
+        1->2-1:to <sheet_view>:sheet_name
+        1->3-1: to <auto-tracking>:sheet_name
+
+2.<sheet_view>:
+    Listener:
+        1->2-1:from <finder>:sheet_name
+               => render(sheet)
+        3->2-1:from <auto-tracking>:cursor
+               => if(out_of_screen)
+                    turn page;
+        3->2-2:from <auto-tracking>:mistakes
+               => change note colour
+    Emitter:
+        when sheet already rendered
+        2->3-1:to <auto-tracking>:'sheet rendered'
+
+3.<auto-tracking>:
+    Listener:
+        1->3-1:from <finder>:sheet_name
+               => load xml
+        2->3-1:from <sheet_view>:'sheet rendered'
+               => start tracking
+        X->3-1:from <any>:'parse'
+               => stop tracking
+        X->3-2:from <any>:'resume'
+               => resume tracking
+    Emitter:
+        when current note modified (set interval optionally)
+        3->2-1:to <sheet_view>:cursor
+
+        when mistake occurred
+        3->3-1:to <sheet_view>:mistakes
+        3->4-1:to <statistic>:mistakes
+
+4.<statistic>:
+    Listener:
+        3-4-1:from <auto-tracking>:mistakes
+              => add this mistake to log

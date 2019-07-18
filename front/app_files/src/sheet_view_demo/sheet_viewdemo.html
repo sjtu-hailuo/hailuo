@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./opensheetmusicdisplay.min.js">
+
+    </script>
+</head>
+<body>
+<h1 id="test">Hello</h1>
+<div id="div-container">
+</div>
+<script>
+    var osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("div-container");
+    //document.getElementById('test').innerHTML = 'loadingscore:'+route;
+    osmd.load('./MuzioClementi_SonatinaOpus36No1_Part2.xml')
+      .then(function(){
+        osmd.graphic.measureList[0][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        osmd.graphic.measureList[0][1].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        osmd.graphic.measureList[1][1].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        osmd.graphic.measureList[8][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        osmd.graphic.measureList[8][0].staffEntries[7].graphicalVoiceEntries[0].notes[1].sourceNote.noteheadColor = "#0000FF";
+      })
+      .then(function(){
+        osmd.render();
+        //document.getElementById('test').innerHTML = 'loaded';
+      });
+
+  //document.getElementById('test').innerHTML = 'html finish';
+  //http://localhost:8081/src/musicxml/MuzioClementi_SonatinaOpus36No1_Part2.xml
+  //http://localhost:8081/musicxml/ActorPreludeSample.musicxml
+
+
+</script>
+</body>
+</html>
