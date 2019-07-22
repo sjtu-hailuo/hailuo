@@ -3,27 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="./opensheetmusicdisplay.min.js"></script>
+    <script src="./opensheetmusicdisplay.min.js">
+    </script>
 </head>
 <body>
-<div id="div-container">
+<button onclick="loadSong(event)">Load the song.</button>
+<button onclick="setLine1(event)">Set/Reset the start line.</button>
+<h1 id="test">Hello</h1>
+
+<div id="div-container" onmousedown="getMousePos(event)">
+    <img  id="pic1" src="./line.jpg" width="20" height="80" style="position: absolute"/>
+    <img  id="pic2" src="./line.jpg" width="20" height="80" style="position: absolute"/>
 </div>
 <script>
   var osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("div-container");
-  osmd.load("http://localhost:8081/src/react-opensheetmusicdisplay-master/public/Beethoven_AnDieFerneGeliebte.xml")
-    .then(function(){
-      osmd.graphic.measureList[0][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
-    });
-  osmd.render();
+  var x,y,row,col,dist,r1,c1,r2,c2;
+  var s=new Array();
+  var flag = -1;
+  var r;
+
+  function loadSong(event){
+        flag = 0;
+        getMousePos(event);
+    }
+
+    function setLine1(event){
+        if (flag===0)
+            flag=1;
+    }
+
+  function loadscore(route){
+    r=route;
+    document.getElementById('test').innerHTML = 'loadingscore:'+route;
+    if (flag===-1) return;
+    var e = event || window.event;
+    x=e.clientX+document.body.scrollLeft + document.documentElement.scrollLeft;
+    y=e.clientY+document.body.scrollTop + document.documentElement.scrollTop;
+    osmd.load(route)
+      .then(function(){
+        document.getElementById('test').innerHTML = 'now loading';
+        // osmd.graphic.measureList[0][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[0][1].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[1][1].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[8][0].staffEntries[1].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+        // osmd.graphic.measureList[8][0].staffEntries[7].graphicalVoiceEntries[0].notes[1].sourceNote.noteheadColor = "#0000FF";
+      })
+      .then(function(){
+        osmd.render();
+        document.getElementById('test').innerHTML = 'loaded';
+      });
+  }
+
+  function getMousePos(event) {
+            if (flag===-1) return;
+            var e = event || window.event;
+            x=e.clientX+document.body.scrollLeft + document.documentElement.scrollLeft;
+            y=e.clientY+document.body.scrollTop + document.documentElement.scrollTop;
+
+            osmd.load(r)
+            .then(function(){
+            osmd.render();
+                  //osmd.graphic.measureList[3][1].staffEntries[0].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#FF0000";
+                  var min = 1000000;
+                  var i = 0;
+                  var j = 0;
+
+                   if (flag !=0) {
+                       while (i < 2) {
+                           while (j < osmd.graphic.measureList.length) {
+                               dist = (osmd.graphic.measureList[j][i].stave.x - x) * (osmd.graphic.measureList[j][i].stave.x - x) + (osmd.graphic.measureList[j][i].stave.y - y) * (osmd.graphic.measureList[j][i].stave.y - y);
+                               s[j] = dist;
+                               if (s[j] < min) {
+                                   min = dist;
+                                   row = i;
+                                   col = j;
+                               }
+                               ++j;
+                           }
+                           ++i;
+                       }
+                       if (flag===1) {
+                           r1=row;
+                           c1=col;
+                       }
+                       else if (flag===2) {
+                           r2=row;
+                           c2=col;
+                       }
+                   }
+            })
+            .then(function(){
+            if (flag===-1) return;
+            if (flag===1) flag=2;
+            else if (flag===2) flag=1;
+
+            osmd.render();
+            if (flag!=0) {
+                x = osmd.graphic.measureList[c1][r1].stave.x;
+                y = osmd.graphic.measureList[c1][r1].stave.y;
+                var pic = document.getElementById("pic1");
+                pic.style.left = x + 'px';
+                pic.style.top = y + 'px';
+                x = osmd.graphic.measureList[c2][r2].stave.x;
+                y = osmd.graphic.measureList[c2][r2].stave.y;
+                var pic = document.getElementById("pic2");
+                pic.style.left = x + 'px';
+                pic.style.top = y + 'px';
+            }
+
+            });
+    }
+
+  function changeNoteColor(note){
+    document.getElementById('test').innerHTML = 'changing note color:'+note.bar+note.line+note.hpos+note.vpos+note.color;
+    osmd.graphic.measureList[note.bar][note.line].staffEntries[note.hpos].graphicalVoiceEntries[0].notes[note.vpos].sourceNote.noteheadColor = note.color;
+    osmd.render();
+    document.getElementById('test').innerHTML = 'rendered';
+  }
+
+  document.addEventListener("message", function(jsonData) {
+    var data=JSON.parse(jsonData.data);
+    document.getElementById('test').innerHTML = 'listened message:'+jsonData;
+    if(data.type==='color'){
+      document.getElementById('test').innerHTML = 'changing note color:'+data.content;
+      changeNoteColor(data.content);
+    }
+    else if(data.type==='route'){
+      document.getElementById('test').innerHTML = 'loading score:'+data.content;
+      loadscore(data.content);
+    }
+  });
+
+  document.getElementById('test').innerHTML = 'html loaded';
+  //http://localhost:8081/src/musicxml/MuzioClementi_SonatinaOpus36No1_Part2.xml
+  //http://localhost:8081/musicxml/ActorPreludeSample.musicxml
 
 
-  // var message;
-  // window.onload = function() {
-  //   document.addEventListener('message', function(msg) {
-  //     console.log(msg)
-  //     message = msg.data;
-  //   });
-  // }
 </script>
 </body>
 </html>
