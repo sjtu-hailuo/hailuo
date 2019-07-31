@@ -16,15 +16,18 @@ drop table if exists score;
 create table score(
 	id int(10) auto_increment not null,
     title varchar(80) not null,
-    composer varchar(40) not null,
+    type varchar(10) not null,
     icon varchar(20) not null,
+    composer varchar(40) not null,
     address varchar(100),
     primary key(id)
 );
 
-insert into score values (1, 'Beethoven_AnDieFerneGeliebte','Beethoven','violin', '/usr/local/musicxml');
-insert into score values (2, 'MuzioClementi_SonatinaOpus36No1_Part2','Muzio Clementi','violin','/usr/local/musicxml');
-insert into score values (3, 'Saltarello_sample','none','violin','/usr/local/musicxml');
+insert into score values (1, 'Beethoven_AnDieFerneGeliebte','xml','piano', 'Beethoven','/usr/local/musicxml');
+insert into score values (2, 'MuzioClementi_SonatinaOpus36No1_Part2','xml','violin','Muzio Clementi','/usr/local/musicxml');
+insert into score values (3, 'Saltarello_sample','musicxml','violin','none','/usr/local/musicxml');
+insert into score values (4, 'Molihua','xml','violin','none','/usr/local/musicxml');
+insert into score values (5, 'Firstdemo','xml','violin','none','/usr/local/musicxml');
 select * from score;
 
 drop table if exists advice;
