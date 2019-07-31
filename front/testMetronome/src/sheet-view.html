@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./opensheetmusicdisplay.min.js">
+    </script>
+</head>
+<body>
+<h1 id="test">Hello</h1>
+<h1 id="notel">notesLength</h1>
+<h1 id="i">i</h1>
+<h1 id="j">j</h1>
+<h1 id="notesi">notesi</h1>
+<h1 id="offsetLengthj">offsetLengthj</h1>
+<h1 id="rendering">rxx</h1>
+<h1 id="baroffset">baroffset</h1>
+
+<button onclick="sendMessage()">Send message</button>
+<div id="div-container">
+</div>
+<script>
+  var osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("div-container");
+  function testt(message){
+    document.getElementById('test').innerHTML = 'test function:'+message;
+  }
+  var barOffsets = [];
+  function loadscore(route){
+    document.getElementById('test').innerHTML = 'loadingscore:'+route;
+    osmd.load(route)
+      .then(function(){
+        document.getElementById('test').innerHTML = 'now loading';
+
+      })
+      .then(function(){
+        osmd.render();
+        document.getElementById('test').innerHTML = 'loaded';
+      })
+      .then(function(){
+        parseSheet();
+      })
+  }
+
+  function changeNoteColor(notes) {
+    var noteLength = notes.length;
+    var offsetLength = barOffsets.length;
+    document.getElementById('notel').innerHTML = noteLength;
+    for (var i = 0; i < noteLength; i++) {
+      for (var j = 0; j < offsetLength; j++) {
+        if (parseInt(notes[i][0]) > parseInt(barOffsets[j])) {
+          if(parseInt(notes[i][0]) < parseInt(barOffsets[j+1])){
+            document.getElementById('i').innerHTML = i;
+            document.getElementById('notesi').innerHTML = notes[i][0];
+            document.getElementById('j').innerHTML = j;
+            document.getElementById('offsetLengthj').innerHTML = barOffsets[j];
+            if (notes[i][1] === 'high')
+              osmd.graphic.measureList[j][0].staffEntries[parseInt(notes[i][0] - barOffsets[j])].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#FF0000";
+            else if (notes[i][1] === 'low') {
+              document.getElementById('rendering').innerHTML = "rendering!!";
+              osmd.graphic.measureList[j][0].staffEntries[parseInt(notes[i][0] - barOffsets[j])].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor = "#0000FF";
+            }
+            document.getElementById('rendering').innerHTML = osmd.graphic.measureList[j][0].staffEntries[parseInt(notes[i][0] - barOffsets[j])].graphicalVoiceEntries[0].notes[0].sourceNote.noteheadColor;
+            osmd.render();
+            return;
+          }
+        }
+      }
+    }
+
+    // document.getElementById('test').innerHTML = 'rendered';
+  }
+
+  function parseSheet(){
+    document.getElementById('test').innerHTML = 'converting note information';
+    var sheetNotes = [];
+    var pitch = 0, duration = 0, onset = 0,count = 0;
+    for (var i=0; i < osmd.graphic.measureList.length; i++){
+      onset = osmd.sheet.SheetPlaybackSetting.rhythm.realValue * i * 4;
+      for(var k=0; k<osmd.graphic.measureList[i][0].staffEntries.length; k++) {
+        pitch = osmd.graphic.measureList[i][0].staffEntries[k].graphicalVoiceEntries[0].notes[0].sourceNote.halfTone+12;
+        if(k!==0){
+          onset += duration;
+        }
+        duration = osmd.graphic.measureList[i][0].staffEntries[k].graphicalVoiceEntries[0].notes[0].sourceNote.length.realValue * 4;
+        //console.log(`${i},`+`${osmd.graphic.measureList.length},`+`${k},`+`${osmd.graphic.measureList[i][0].staffEntries.length},`+`${pitch},`+`${duration},`+`${onset}`);
+        var temp = {};
+        temp.pitch =pitch;
+        temp.duration =duration;
+        temp.onset =onset;
+        sheetNotes.push(temp);
+        //sheetNotes.push(new Note(pitchN, duration, onset));
+        //console.log(`converted New Note(${pitchN}, ${duration}, ${onset}),`);
+      }
+    }
+    //console.log(sheetNotes);
+    document.getElementById('test').innerHTML = 'parsing note information';
+    window.ReactNativeWebView.postMessage(JSON.stringify(sheetNotes));
+
+    var barOffset=0;
+    barOffsets.push(barOffset);
+    for (var i=0; i < osmd.graphic.measureList.length; i++){
+      barOffset += osmd.graphic.measureList[i][0].staffEntries.length;
+      barOffsets.push(barOffset);
+    }
+    //document.getElementById('baroffset').innerHTML = barOffsets;
+  }
+
+  function sendMessage(){
+    window.ReactNativeWebView.postMessage("Hello!")
+  }
+
+
+  window.addEventListener("message", function(jsonData) {
+    var data=JSON.parse(jsonData.data);
+    document.getElementById('test').innerHTML = 'listened message:'+jsonData;
+    if(data.type==='color'){
+      document.getElementById('test').innerHTML = 'changing note color:'+data.content;
+      changeNoteColor(data.content);
+    }
+    else if(data.type==='route'){
+      document.getElementById('test').innerHTML = 'loading score:'+data.content;
+      loadscore(data.content);
+    }
+  });
+
+  document.addEventListener("message", function(jsonData) {
+    var data=JSON.parse(jsonData.data);
+    document.getElementById('test').innerHTML = 'listened message:'+jsonData;
+    if(data.type==='color'){
+      document.getElementById('test').innerHTML = 'changing note color:'+data.content;
+      changeNoteColor(data.content);
+    }
+    else if(data.type==='route'){
+      document.getElementById('test').innerHTML = 'loading score:'+data.content;
+      loadscore(data.content);
+    }
+  });
+
+
+  document.getElementById('test').innerHTML = 'html loaded';
+  //http://localhost:8081/src/musicxml/MuzioClementi_SonatinaOpus36No1_Part2.xml
+  //http://localhost:8081/src/musicxml/Beethoven_AnDieFerneGeliebte.xml
+  //http://localhost:8081/src/musicxml/Saltarello_sample.musicxml
+
+</script>
+</body>
+</html>

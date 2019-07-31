@@ -1,0 +1,6 @@
+core.js
+--add resetBySheetName
+sheet.js
+--add resetSheet
+
+add metronome_01.wav to android/app/src/main/res/raw
